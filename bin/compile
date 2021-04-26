@@ -16,32 +16,13 @@ mkdir -p "$BUILD_DIR/vendor"
 
 echo "-----> Fetching Calibre"
 
-curl --silent --output /tmp/linux-installer.py https://raw.githubusercontent.com/kovidgoyal/calibre/master/setup/linux-installer.py > /dev/null 2>&1
+curl --silent --output /tmp/linux-installer.py https://download.calibre-ebook.com/linux-installer.sh > /dev/null 2>&1
 
 echo "-----> Installing Calibre"
 unset PYTHONPATH
 unset PYTHONHOME
 
 python2.7 -c "execfile(\"/tmp/linux-installer.py\"); main(install_dir=\"$BUILD_DIR\", ignore_umask=True)" > /dev/null 2>&1
-
-# libGL dependency required for image processing
-echo "-----> Installing dependencies"
-for dep in \
-  http://mirrors.kernel.org/ubuntu/pool/main/libg/libglvnd/libgl1_1.0.0-2ubuntu2_amd64.deb \
-  http://mirrors.kernel.org/ubuntu/pool/main/libg/libglvnd/libglvnd0_1.0.0-2ubuntu2_amd64.deb \
-  http://mirrors.kernel.org/ubuntu/pool/main/libg/libglvnd/libglx0_1.0.0-2ubuntu2_amd64.deb \
-  http://mirrors.kernel.org/ubuntu/pool/main/libx/libxcomposite/libxcomposite1_0.4.4-2_amd64.deb \
-  http://ftp.debian.org/debian/pool/main/n/nss/libnss3_3.58-1_amd64.deb \
-  http://ftp.debian.org/debian/pool/main/n/nspr/libnspr4_4.20-1_amd64.deb \
-  http://ftp.debian.org/debian/pool/main/libx/libxdamage/libxdamage-dev_1.1.4-3+b3_amd64.deb
-do
-  echo $dep
-  curl -OLs $dep
-  ar x *.deb
-  tar xf data.tar.xz
-  rm *.deb
-done
-mv ./usr/lib/x86_64-linux-gnu/* $BUILD_DIR/calibre/lib/
 
 echo "-----> Setting up path"
 
